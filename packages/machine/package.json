@@ -1,0 +1,17 @@
+{
+  "name": "@pyoner/machine",
+  "version": "1.0.0",
+  "description": "Finite State Machine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "fsm",
+    "statecharts",
+    "machine",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT"
+}
