@@ -32,26 +32,26 @@ export type Transitions<C extends Context, E extends Event> = {
 };
 
 export interface State<
-  N = string,
+  ID = string,
   C extends Context = Context,
   E extends Event = Event
 > {
-  name: N;
+  id: ID;
   transitions?: Transitions<C, E>;
 }
 
-export type States<S extends { name: string }> = {
-  [P in S["name"]]: Filter<S, { name: P }>
+export type States<S extends { id: string }> = {
+  [P in S["id"]]: Filter<S, { id: P }>
 };
 
 // helpers
 export function state<
-  N = string,
+  ID = string,
   C extends Context = Context,
   E extends Event = Event
->(name: N, transitions?: Transitions<C, E>): State<N, C, E> {
+>(id: ID, transitions?: Transitions<C, E>): State<ID, C, E> {
   return {
-    name,
+    id,
     transitions
   };
 }

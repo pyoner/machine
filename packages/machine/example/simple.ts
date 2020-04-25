@@ -24,7 +24,7 @@ type Events = ClickEvent | PressEvent;
 type S1State = State<"s1", Context, Events>;
 
 export const s1: S1State = {
-  name: "s1",
+  id: "s1",
   transitions: {
     click: {
       to: "StateClick",
@@ -48,7 +48,7 @@ interface EnterEvent extends Event<"enter"> {
 type S2Events = EnterEvent | ClickEvent;
 type S2State = State<"s2", Context, S2Events>;
 export const s2: S2State = {
-  name: "s2",
+  id: "s2",
   transitions: {
     click: {
       to: "StateClick",
