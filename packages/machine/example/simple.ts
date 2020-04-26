@@ -22,7 +22,7 @@ type S1State = State<"s1", MyContext, Events>;
 
 export const s1: S1State = {
   id: "s1",
-  transitions: {
+  on: {
     click: {
       to: "StateClick",
       guards: [(_, e) => e.y > 100 && e.x > 200]
@@ -42,7 +42,7 @@ type S2Events = EnterEvent | ClickEvent;
 type S2State = State<"s2", MyContext, S2Events>;
 export const s2: S2State = {
   id: "s2",
-  transitions: {
+  on: {
     click: {
       to: "StateClick",
       guards: [(_, e) => e.y > 100 && e.x > 200]

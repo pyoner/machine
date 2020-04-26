@@ -37,7 +37,7 @@ export interface State<
   E extends Event = Event
 > {
   id: ID;
-  transitions?: Transitions<C, E>;
+  on?: Transitions<C, E>;
 }
 
 export type Machine<S extends { id: string }> = {

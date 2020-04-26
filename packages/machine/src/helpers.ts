@@ -13,10 +13,10 @@ export function state<
   ID = string,
   C extends Context = Context,
   E extends Event = Event
->(id: ID, transitions?: Transitions<C, E>): State<ID, C, E> {
+>(id: ID, on?: Transitions<C, E>): State<ID, C, E> {
   return {
     id,
-    transitions
+    on
   };
 }
 
