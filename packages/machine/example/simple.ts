@@ -1,12 +1,5 @@
-import {
-  Event,
-  State,
-  States,
-  Context,
-  state,
-  transition,
-  guards
-} from "../src/machine";
+import { Event, State, Machine, Context } from "../src/machine";
+import { state, transition, guards } from "../src/helpers";
 
 // type MyEvent = Event<"my"> & {isMe: true}
 
@@ -61,9 +54,12 @@ export const s2: S2State = {
   }
 };
 
-export const states: States<S1State | S2State> = {
-  s1,
-  s2
+export const machine: Machine<S1State | S2State> = {
+  initial: "s1",
+  states: {
+    s1,
+    s2
+  }
 };
 
 // use helpers

@@ -40,6 +40,7 @@ export interface State<
   transitions?: Transitions<C, E>;
 }
 
-export type States<S extends { id: string }> = {
-  [P in S["id"]]: Filter<S, { id: P }>
+export type Machine<S extends { id: string }> = {
+  initial: S["id"];
+  states: { [P in S["id"]]: Filter<S, { id: P }> };
 };
