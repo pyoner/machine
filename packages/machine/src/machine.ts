@@ -1,5 +1,3 @@
-type Filter<T, F> = T extends F ? T : never;
-
 export type Context = any;
 export interface Event<T = string> {
   type: T;
@@ -28,7 +26,7 @@ export interface Transition<C extends Context, E extends Event> {
 }
 
 export type Transitions<C extends Context, E extends Event> = {
-  [P in E["type"]]: Transition<C, Filter<E, { type: P }>>
+  [P in E["type"]]: Transition<C, Extract<E, { type: P }>>
 };
 
 export interface State<
@@ -42,5 +40,5 @@ export interface State<
 
 export type Machine<S extends { id: string }> = {
   initial: S["id"];
-  states: { [P in S["id"]]: Filter<S, { id: P }> };
+  states: { [P in S["id"]]: Extract<S, { id: P }> };
 };
