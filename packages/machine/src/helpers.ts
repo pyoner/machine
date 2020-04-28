@@ -1,31 +1,27 @@
 import {
   Context,
   Event,
-  State,
-  Transition,
-  Transitions,
   GuardFunction,
   ReduceFunction,
   ActionFunction
 } from "./machine";
 
-export function state<
-  ID = string,
-  C extends Context = Context,
-  E extends Event = Event
->(id: ID, on?: Transitions<C, E>): State<ID, C, E> {
+export function state<S>(
+  id: S extends { id: infer ID } ? ID : never,
+  on?: S extends { on?: infer O } ? O : never
+) {
   return {
     id,
     on
   };
 }
 
-export function transition<C extends Context, E extends Event>(
-  to: string,
+export function transition<IDs, C extends Context, E extends Event>(
+  to: IDs,
   guards?: GuardFunction<C, E>[],
   reducers?: ReduceFunction<C, E>[],
   actions?: ActionFunction<C, E>[]
-): Transition<C, E> {
+) {
   return { to, guards, reducers, actions };
 }
 

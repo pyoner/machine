@@ -16,19 +16,21 @@ interface MyContext extends Context {
   flag: boolean;
 }
 
+type IDs = "s1" | "s2";
+
 type Events = ClickEvent | PressEvent;
 
-type S1State = State<"s1", MyContext, Events>;
+type S1State = State<IDs, "s1", MyContext, Events>;
 
 export const s1: S1State = {
   id: "s1",
   on: {
     click: {
-      to: "StateClick",
+      to: "s1",
       guards: [(_, e) => e.y > 100 && e.x > 200]
     },
     press: {
-      to: "StatePress",
+      to: "s2",
       guards: [(_, e) => e.charCode > 23]
     }
   }
@@ -39,16 +41,16 @@ interface EnterEvent extends Event<"enter"> {
 }
 
 type S2Events = EnterEvent | ClickEvent;
-type S2State = State<"s2", MyContext, S2Events>;
+type S2State = State<IDs, "s2", MyContext, S2Events>;
 export const s2: S2State = {
   id: "s2",
   on: {
     click: {
-      to: "StateClick",
+      to: "s2",
       guards: [(_, e) => e.y > 100 && e.x > 200]
     },
     enter: {
-      to: "StateEnter",
+      to: "s1",
       guards: [(_, e) => e.value.length > 100]
     }
   }
@@ -63,7 +65,10 @@ export const machine: Machine<S1State | S2State> = {
 };
 
 // use helpers
-export const s11 = state<"s11", MyContext, Events>("s11", {
-  click: transition("StateClick", guards((_, e) => e.y > 100 && e.x > 200)),
-  press: transition("StatePress", guards((_, e) => e.charCode > 100))
+type NewIds = "s11" | "s12";
+type S11State = State<NewIds, "s11", MyContext, Events>;
+
+export const s11: S11State = state<S11State>("s11", {
+  click: transition("s11", guards((_, e) => e.y > 100 && e.x > 200)),
+  press: transition("s12", guards((_, e) => e.charCode > 100))
 });
