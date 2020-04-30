@@ -18,19 +18,25 @@ export type ActionFunction<C extends Context, E extends Event> = (
   event: E
 ) => any;
 
-export interface Transition<IDs, C extends Context, E extends Event> {
+export interface Transition<
+  IDs extends keyof any,
+  C extends Context,
+  E extends Event
+> {
   to: IDs;
   guard?: GuardFunction<C, E>;
   reducer?: ReduceFunction<C, E>;
   action?: ActionFunction<C, E>;
 }
 
-export type Transitions<IDs, C extends Context, E extends Event> = {
-  [P in E["type"]]: Transition<IDs, C, Extract<E, { type: P }>>
-};
+export type Transitions<
+  IDs extends keyof any,
+  C extends Context,
+  E extends Event
+> = { [P in E["type"]]: Transition<IDs, C, Extract<E, { type: P }>> };
 
 export interface State<
-  IDs extends string,
+  IDs extends keyof any,
   ID extends IDs,
   C extends Context = Context,
   E extends Event = Event
@@ -39,7 +45,7 @@ export interface State<
   on?: Transitions<IDs, C, E>;
 }
 
-export type Machine<S extends { id: string }> = {
+export type Machine<S extends { id: keyof any }> = {
   initial: S["id"];
   states: { [P in S["id"]]: Extract<S, { id: P }> };
 };

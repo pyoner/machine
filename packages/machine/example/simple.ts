@@ -16,21 +16,29 @@ interface MyContext extends Context {
   flag: boolean;
 }
 
-type IDs = "s1" | "s2";
+// use Union or Enum as possible states
+// use string-based enums see:
+// https://2ality.com/2020/01/typescript-enums.html#downside%3A-loose-type-checking
+// https://2ality.com/2020/01/typescript-enums.html#recommendation%3A-prefer-string-based-enums
+
+enum MyStates {
+  s1 = "s1",
+  s2 = "s2"
+}
 
 type Events = ClickEvent | PressEvent;
 
-type S1State = State<IDs, "s1", MyContext, Events>;
+type S1State = State<MyStates, MyStates.s1, MyContext, Events>;
 
 export const s1: S1State = {
-  id: "s1",
+  id: MyStates.s1,
   on: {
     click: {
-      to: "s1",
+      to: MyStates.s1,
       guard: (_, e) => e.y > 100 && e.x > 200
     },
     press: {
-      to: "s2",
+      to: MyStates.s2,
       guard: (_, e) => e.charCode > 23
     }
   }
@@ -41,23 +49,23 @@ interface EnterEvent extends Event<"enter"> {
 }
 
 type S2Events = EnterEvent | ClickEvent;
-type S2State = State<IDs, "s2", MyContext, S2Events>;
+type S2State = State<MyStates, MyStates.s2, MyContext, S2Events>;
 export const s2: S2State = {
-  id: "s2",
+  id: MyStates.s2,
   on: {
     click: {
-      to: "s2",
+      to: MyStates.s2,
       guard: (_, e) => e.y > 100 && e.x > 200
     },
     enter: {
-      to: "s1",
+      to: MyStates.s1,
       guard: (_, e) => e.value.length > 100
     }
   }
 };
 
 export const machine: Machine<S1State | S2State> = {
-  initial: "s1",
+  initial: MyStates.s1,
   states: {
     s1,
     s2
@@ -65,10 +73,11 @@ export const machine: Machine<S1State | S2State> = {
 };
 
 // use helpers
-type NewIds = "s11" | "s12";
-type S11State = State<NewIds, "s11", MyContext, Events>;
+// use Union or Enum as possible states
+type States = "s11" | "s12" | "s13";
+type S11State = State<States, "s11", MyContext, Events>;
 
 export const s11: S11State = state<S11State>("s11", {
-  click: transition("s11", guards((_, e) => e.y > 100 && e.x > 200)),
+  click: transition("s13", guards((_, e) => e.y > 100 && e.x > 200)),
   press: transition("s12", guards((_, e) => e.charCode > 100))
 });
