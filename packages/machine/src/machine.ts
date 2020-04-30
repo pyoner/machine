@@ -33,7 +33,11 @@ export type Transitions<
   IDs extends keyof any,
   C extends Context,
   E extends Event
-> = { [P in E["type"]]: Transition<IDs, C, Extract<E, { type: P }>> };
+> = {
+  [P in E["type"]]:
+    | Transition<IDs, C, Extract<E, { type: P }>>
+    | Transition<IDs, C, Extract<E, { type: P }>>[]
+};
 
 export interface State<
   IDs extends keyof any,
