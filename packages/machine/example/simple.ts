@@ -27,11 +27,11 @@ export const s1: S1State = {
   on: {
     click: {
       to: "s1",
-      guards: [(_, e) => e.y > 100 && e.x > 200]
+      guard: (_, e) => e.y > 100 && e.x > 200
     },
     press: {
       to: "s2",
-      guards: [(_, e) => e.charCode > 23]
+      guard: (_, e) => e.charCode > 23
     }
   }
 };
@@ -47,11 +47,11 @@ export const s2: S2State = {
   on: {
     click: {
       to: "s2",
-      guards: [(_, e) => e.y > 100 && e.x > 200]
+      guard: (_, e) => e.y > 100 && e.x > 200
     },
     enter: {
       to: "s1",
-      guards: [(_, e) => e.value.length > 100]
+      guard: (_, e) => e.value.length > 100
     }
   }
 };

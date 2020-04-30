@@ -18,27 +18,28 @@ export function state<S>(
 
 export function transition<IDs, C extends Context, E extends Event>(
   to: IDs,
-  guards?: GuardFunction<C, E>[],
-  reducers?: ReduceFunction<C, E>[],
-  actions?: ActionFunction<C, E>[]
+  guard?: GuardFunction<C, E>,
+  reducer?: ReduceFunction<C, E>,
+  action?: ActionFunction<C, E>
 ) {
-  return { to, guards, reducers, actions };
+  return { to, guard, reducer, action };
 }
 
 export function guards<C extends Context, E extends Event>(
   ...args: GuardFunction<C, E>[]
-) {
-  return args;
+): GuardFunction<C, E> {
+  return (context: C, event: E) => args.every(func => func(context, event));
 }
 
 export function reducers<C extends Context, E extends Event>(
   ...args: ReduceFunction<C, E>[]
-) {
-  return args;
+): ReduceFunction<C, E> {
+  return (context: C, event: E) =>
+    args.reduce((c, func) => func(c, event), context);
 }
 
 export function actions<C extends Context, E extends Event>(
   ...args: ActionFunction<C, E>[]
-) {
-  return args;
+): ActionFunction<C, E> {
+  return (context: C, event: E) => args.forEach(func => func(context, event));
 }

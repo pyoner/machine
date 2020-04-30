@@ -20,9 +20,9 @@ export type ActionFunction<C extends Context, E extends Event> = (
 
 export interface Transition<IDs, C extends Context, E extends Event> {
   to: IDs;
-  guards?: GuardFunction<C, E>[];
-  reducers?: ReduceFunction<C, E>[];
-  actions?: ActionFunction<C, E>[];
+  guard?: GuardFunction<C, E>;
+  reducer?: ReduceFunction<C, E>;
+  action?: ActionFunction<C, E>;
 }
 
 export type Transitions<IDs, C extends Context, E extends Event> = {
