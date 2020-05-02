@@ -1,5 +1,5 @@
-import { Event, State, Machine, Context } from "../src/machine";
-import { state, transition, guards } from "../src/helpers";
+import { Event, State, Machine, Context, PromiseEvent } from "../src/machine";
+import { state, transition, guards, invoke } from "../src/helpers";
 
 // type MyEvent = Event<"my"> & {isMe: true}
 
@@ -81,3 +81,12 @@ export const s11: S11State = state<S11State>("s11", {
   click: transition("s13", guards((_, e) => e.y > 100 && e.x > 200)),
   press: transition("s12", guards((_, e) => e.charCode > 100))
 });
+
+type InvokeStates = "invoke" | "done" | "error";
+type InvokeState = State<InvokeStates, "invoke", MyContext, PromiseEvent>;
+export const invokeState: InvokeState = invoke<InvokeState>(
+  "invoke",
+  (c, e) => Promise.resolve(c),
+  "done",
+  "error"
+);

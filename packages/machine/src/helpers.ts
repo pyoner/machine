@@ -43,3 +43,24 @@ export function actions<C extends Context, E extends Event>(
 ): ActionFunction<C, E> {
   return (context: C, event: E) => args.forEach(func => func(context, event));
 }
+
+export type ExtractIDs<S> = S extends {
+  on?: Record<keyof any, { to: infer TO } | { to: infer TO }[]>;
+}
+  ? TO
+  : never;
+
+export function invoke<S>(
+  id: S extends { id: infer ID } ? ID : never,
+  fn: <C extends Context, E extends Event>(context: C, event: E) => Promise<C>,
+  done: ExtractIDs<S>,
+  error: ExtractIDs<S>
+) {
+  return {
+    id,
+    on: {
+      done: transition(done),
+      error: transition(error)
+    }
+  };
+}

@@ -1,7 +1,11 @@
 export type Context = any;
-export interface Event<T = string> {
+export interface Event<T extends keyof any = string> {
   type: T;
 }
+
+export type DoneEvent = Event<"done">;
+export type ErrorEvent = Event<"error">;
+export type PromiseEvent = DoneEvent | ErrorEvent;
 
 export type GuardFunction<C extends Context, E extends Event> = (
   context: C,
