@@ -1,5 +1,5 @@
 export type Context = any;
-export interface Event<T extends keyof any = string> {
+export interface Event<T extends keyof any = keyof any> {
   type: T;
 }
 
@@ -51,6 +51,8 @@ export interface State<
 > {
   id: ID;
   on?: Transitions<IDs, C, E>;
+  enter?: ActionFunction<C, E>;
+  exit?: ActionFunction<C, E>;
 }
 
 export type Machine<S extends { id: keyof any }> = {

@@ -8,11 +8,15 @@ import {
 
 export function state<S>(
   id: S extends { id: infer ID } ? ID : never,
-  on?: S extends { on?: infer O } ? O : never
+  on?: S extends { on?: infer O } ? O : never,
+  enter?: S extends { enter?: infer T } ? T : never,
+  exit?: S extends { exit?: infer T } ? T : never
 ) {
   return {
     id,
-    on
+    on,
+    enter,
+    exit
   };
 }
 
@@ -61,6 +65,7 @@ export function invoke<S>(
     on: {
       done: transition(done),
       error: transition(error)
-    }
+    },
+    enter: fn
   };
 }
