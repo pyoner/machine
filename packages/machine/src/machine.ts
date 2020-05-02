@@ -59,3 +59,11 @@ export type Machine<S extends { id: keyof any }> = {
   initial: S["id"];
   states: { [P in S["id"]]: Extract<S, { id: P }> };
 };
+
+export type ExtractID<S> = S extends { id: infer ID } ? ID : never;
+
+export type ExtractIDs<S> = S extends {
+  on?: Record<keyof any, { to: infer TO } | { to: infer TO }[]>;
+}
+  ? TO
+  : never;

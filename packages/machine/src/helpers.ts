@@ -3,11 +3,13 @@ import {
   Event,
   GuardFunction,
   ReduceFunction,
-  ActionFunction
+  ActionFunction,
+  ExtractID,
+  ExtractIDs
 } from "./machine";
 
 export function state<S>(
-  id: S extends { id: infer ID } ? ID : never,
+  id: ExtractID<S>,
   on?: S extends { on?: infer O } ? O : never,
   enter?: S extends { enter?: infer T } ? T : never,
   exit?: S extends { exit?: infer T } ? T : never
@@ -48,14 +50,8 @@ export function actions<C extends Context, E extends Event>(
   return (context: C, event: E) => args.forEach(func => func(context, event));
 }
 
-export type ExtractIDs<S> = S extends {
-  on?: Record<keyof any, { to: infer TO } | { to: infer TO }[]>;
-}
-  ? TO
-  : never;
-
 export function invoke<S>(
-  id: S extends { id: infer ID } ? ID : never,
+  id: ExtractID<S>,
   fn: <C extends Context, E extends Event>(context: C, event: E) => Promise<C>,
   done: ExtractIDs<S>,
   error: ExtractIDs<S>
