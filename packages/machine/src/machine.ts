@@ -22,6 +22,11 @@ export type ActionFunction<C extends Context, E extends Event> = (
   event: E
 ) => any;
 
+export type InvokeFunction<C extends Context, E extends Event> = (
+  context: C,
+  event: E
+) => Promise<C>;
+
 export interface Transition<
   IDs extends keyof any,
   C extends Context,
