@@ -3,9 +3,13 @@ export interface Event<T extends keyof any = keyof any> {
   type: T;
 }
 
-export type DoneEvent = Event<"done">;
-export type ErrorEvent = Event<"error">;
-export type PromiseEvent = DoneEvent | ErrorEvent;
+export interface Payload<T> {
+  payload: T;
+}
+
+export type DoneEvent<D> = Event<"done"> & Payload<D>;
+export type ErrorEvent<E extends Error> = Event<"error"> & Payload<E>;
+export type PromiseEvent<D, E extends Error> = DoneEvent<D> | ErrorEvent<E>;
 
 export type GuardFunction<C extends Context, E extends Event> = (
   context: C,
