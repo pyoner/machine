@@ -1,13 +1,19 @@
 import {
   Context,
   Event,
+  Meta,
   GuardFunction,
   ReduceFunction,
   ActionFunction,
   ExtractID,
   ExtractIDs,
-  InvokeFunction
+  InvokeFunction,
+  ExtractInvokeData,
+  EnterFunction,
+  ExtractStateParam
 } from "./machine";
+
+import { send } from "./interpret";
 
 export function state<S>(
   id: ExtractID<S>,
@@ -23,50 +29,62 @@ export function state<S>(
   };
 }
 
-export function transition<IDs, C extends Context, E extends Event>(
+export function transition<
+  IDs,
+  C extends Context,
+  E extends Event,
+  M extends Meta
+>(
   to: IDs,
-  guard?: GuardFunction<C, E>,
-  reducer?: ReduceFunction<C, E>,
-  action?: ActionFunction<C, E>
+  guard?: GuardFunction<C, E, M>,
+  reducer?: ReduceFunction<C, E, M>,
+  action?: ActionFunction<C, E, M>
 ) {
   return { to, guard, reducer, action };
 }
 
-export function guards<C extends Context, E extends Event>(
-  ...args: GuardFunction<C, E>[]
-): GuardFunction<C, E> {
-  return (context: C, event: E) => args.every(func => func(context, event));
+export function guards<C extends Context, E extends Event, M extends Meta>(
+  ...args: GuardFunction<C, E, M>[]
+): GuardFunction<C, E, M> {
+  return (context: C, event: E, meta: M) =>
+    args.every(func => func(context, event, meta));
 }
 
-export function reducers<C extends Context, E extends Event>(
-  ...args: ReduceFunction<C, E>[]
-): ReduceFunction<C, E> {
-  return (context: C, event: E) =>
-    args.reduce((c, func) => func(c, event), context);
+export function reducers<C extends Context, E extends Event, M extends Meta>(
+  ...args: ReduceFunction<C, E, M>[]
+): ReduceFunction<C, E, M> {
+  return (context: C, event: E, meta: M) =>
+    args.reduce((c, func) => func(c, event, meta), context);
 }
 
-export function actions<C extends Context, E extends Event>(
-  ...args: ActionFunction<C, E>[]
-): ActionFunction<C, E> {
-  return (context: C, event: E) => args.forEach(func => func(context, event));
+export function actions<C extends Context, E extends Event, M extends Meta>(
+  ...args: ActionFunction<C, E, M>[]
+): ActionFunction<C, E, M> {
+  return (context: C, event: E, meta: M) =>
+    args.forEach(func => func(context, event, meta));
 }
 
-function wrapInvokeFn<C extends Context, E extends Event>(
-  f: InvokeFunction<C, E>
-): ActionFunction<C, E> {
-  return async (context, event) => {
+function wrapInvokeFn<D, C extends Context, M extends Meta>(
+  f: InvokeFunction<D, C, M>
+): EnterFunction<C, M> {
+  return async (context, meta) => {
+    const queue = meta.queues[meta.id];
     try {
-      const data = await f(context, event);
-      send({ type: "done", data });
+      const data = await f(context, meta);
+      send(queue, { type: "done", data });
     } catch (error) {
-      send({ type: "error", error });
+      send(queue, { type: "error", error });
     }
   };
 }
 
 export function invoke<S>(
   id: ExtractID<S>,
-  fn: <C extends Context, E extends Event>(context: C, event: E) => Promise<C>,
+  fn: InvokeFunction<
+    ExtractInvokeData<S>,
+    ExtractStateParam<S, "Context">,
+    ExtractStateParam<S, "Meta">
+  >,
   done: ExtractIDs<S>,
   error: ExtractIDs<S>
 ) {

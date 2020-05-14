@@ -83,10 +83,15 @@ export const s11: S11State = state<S11State>("s11", {
 });
 
 type InvokeStates = "invoke" | "done" | "error";
-type InvokeState = State<InvokeStates, "invoke", MyContext, PromiseEvent>;
+type InvokeState = State<
+  InvokeStates,
+  "invoke",
+  MyContext,
+  PromiseEvent<string, Error>
+>;
 export const invokeState: InvokeState = invoke<InvokeState>(
   "invoke",
-  (c, e) => Promise.resolve(c),
+  (c, m) => Promise.resolve("foo"),
   "done",
   "error"
 );
