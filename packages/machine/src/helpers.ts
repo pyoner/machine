@@ -5,18 +5,16 @@ import {
   GuardFunction,
   ReduceFunction,
   ActionFunction,
-  ExtractID,
-  ExtractIDs,
   InvokeFunction,
-  ExtractInvokeData,
   EnterFunction,
-  ExtractStateParam
+  ExtractInvokeData,
+  ExtractFromState
 } from "./machine";
 
 import { send } from "./interpret";
 
 export function state<S>(
-  id: ExtractID<S>,
+  id: ExtractFromState<S, "ID">,
   on?: S extends { on?: infer O } ? O : never,
   enter?: S extends { enter?: infer T } ? T : never,
   exit?: S extends { exit?: infer T } ? T : never
@@ -79,14 +77,14 @@ function wrapInvokeFn<D, C extends Context, M extends Meta>(
 }
 
 export function invoke<S>(
-  id: ExtractID<S>,
+  id: ExtractFromState<S, "ID">,
   fn: InvokeFunction<
     ExtractInvokeData<S>,
-    ExtractStateParam<S, "Context">,
-    ExtractStateParam<S, "Meta">
+    ExtractFromState<S, "Context">,
+    ExtractFromState<S, "Meta">
   >,
-  done: ExtractIDs<S>,
-  error: ExtractIDs<S>
+  done: ExtractFromState<S, "IDs">,
+  error: ExtractFromState<S, "IDs">
 ) {
   return {
     id,

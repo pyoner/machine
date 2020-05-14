@@ -88,43 +88,7 @@ export type Machine<S extends { id: keyof any }> = {
   states: { [P in S["id"]]: Extract<S, { id: P }> };
 };
 
-export type ExtractID<S> = S extends { id: infer ID } ? ID : never;
-
-export type ExtractIDs<S> = S extends {
-  on?: Record<keyof any, { to: infer TO } | { to: infer TO }[]>;
-}
-  ? TO
-  : never;
-
-export type ActionParamKey = "context" | "event" | "meta";
-export type ExtractActionParam<F, P extends ActionParamKey> = F extends (
-  context: infer C,
-  event: infer E,
-  meta: infer M
-) => unknown
-  ? P extends "context"
-    ? C
-    : P extends "event"
-    ? E
-    : P extends "meta"
-    ? M
-    : never
-  : never;
-
-export type ExtractFnParams<F> = F extends (...args: infer P) => unknown
-  ? P
-  : never;
-export type ExtractInvokeParam<S, P extends "context" | "meta"> = S extends {
-  enter?: infer F;
-}
-  ? P extends "context"
-    ? ExtractFnParams<F>[0]
-    : P extends "meta"
-    ? ExtractFnParams<F>[1]
-    : never
-  : never;
-
-export type ExtractInvokeData<S> = ExtractStateParam<
+export type ExtractInvokeData<S> = ExtractFromState<
   S,
   "Event"
 > extends PromiseEvent<infer D, infer _>
@@ -132,7 +96,7 @@ export type ExtractInvokeData<S> = ExtractStateParam<
   : never;
 
 export type StateParam = "IDs" | "ID" | "Context" | "Event" | "Meta";
-export type ExtractStateParam<S, P extends StateParam> = S extends State<
+export type ExtractFromState<S, P extends StateParam> = S extends State<
   infer IDs,
   infer ID,
   infer C,
