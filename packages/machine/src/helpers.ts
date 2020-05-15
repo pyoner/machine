@@ -7,7 +7,6 @@ import {
   ActionFunction,
   InvokeFunction,
   EnterFunction,
-  ExtractInvokeData,
   ExtractFromState
 } from "./machine";
 
@@ -79,7 +78,7 @@ function wrapInvokeFn<D, C extends Context, M extends Meta>(
 export function invoke<S>(
   id: ExtractFromState<S, "ID">,
   fn: InvokeFunction<
-    ExtractInvokeData<S>,
+    ExtractFromState<S, "InvokeData">,
     ExtractFromState<S, "Context">,
     ExtractFromState<S, "Meta">
   >,

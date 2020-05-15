@@ -5,7 +5,7 @@ export interface Event<T extends keyof any = keyof any> {
 
 export type DoneEvent<D> = Event<"done"> & { data: D };
 export type ErrorEvent<E extends Error> = Event<"error"> & { error: E };
-export type PromiseEvent<D, E extends Error> = DoneEvent<D> | ErrorEvent<E>;
+export type InvokeEvent<D, E extends Error> = DoneEvent<D> | ErrorEvent<E>;
 
 export type Queue = Array<Event>;
 export type Queues = Record<number, Queue>;
@@ -88,14 +88,26 @@ export type Machine<S extends { id: keyof any }> = {
   states: { [P in S["id"]]: Extract<S, { id: P }> };
 };
 
-export type ExtractInvokeData<S> = ExtractFromState<
-  S,
-  "Event"
-> extends PromiseEvent<infer D, infer _>
-  ? D
+export type InvokeParam = "Data" | "Error";
+export type ExtractFromInvokeEvent<
+  I,
+  P extends InvokeParam
+> = I extends InvokeEvent<infer D, infer Err>
+  ? P extends "Data"
+    ? D
+    : P extends "Error"
+    ? Err
+    : never
   : never;
 
-export type StateParam = "IDs" | "ID" | "Context" | "Event" | "Meta";
+export type StateParam =
+  | "IDs"
+  | "ID"
+  | "Context"
+  | "Event"
+  | "Meta"
+  | "InvokeData"
+  | "InvokeError";
 export type ExtractFromState<S, P extends StateParam> = S extends State<
   infer IDs,
   infer ID,
@@ -113,5 +125,9 @@ export type ExtractFromState<S, P extends StateParam> = S extends State<
     ? E
     : P extends "Meta"
     ? M
+    : P extends "InvokeData"
+    ? ExtractFromInvokeEvent<E, "Data">
+    : P extends "InvokeError"
+    ? ExtractFromInvokeEvent<E, "Error">
     : never
   : never;

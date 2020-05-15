@@ -1,4 +1,4 @@
-import { Event, State, Machine, Context, PromiseEvent } from "../src/machine";
+import { Event, State, Machine, Context, InvokeEvent } from "../src/machine";
 import { state, transition, guards, invoke } from "../src/helpers";
 
 // type MyEvent = Event<"my"> & {isMe: true}
@@ -87,7 +87,7 @@ type InvokeState = State<
   InvokeStates,
   "invoke",
   MyContext,
-  PromiseEvent<string, Error>
+  InvokeEvent<string, Error>
 >;
 export const invokeState: InvokeState = invoke<InvokeState>(
   "invoke",
