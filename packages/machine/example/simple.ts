@@ -1,4 +1,11 @@
-import { Event, State, Machine, Context, InvokeEvent } from "../src/machine";
+import {
+  Event,
+  State,
+  Machine,
+  Context,
+  InvokeEvent,
+  Pool
+} from "../src/machine";
 import { state, transition, guards, invoke } from "../src/helpers";
 
 // type MyEvent = Event<"my"> & {isMe: true}
@@ -64,11 +71,20 @@ export const s2: S2State = {
   }
 };
 
-export const machine: Machine<S1State | S2State> = {
+export declare const MyMachine: unique symbol;
+export type MyMachine = Machine<typeof MyMachine, S1State | S2State>;
+export const machine: MyMachine = {
+  id: MyMachine,
   initial: MyStates.s1,
   states: {
     s1,
     s2
+  }
+};
+
+export const pool: Pool<MyMachine> = {
+  [MyMachine]: {
+    x: [{ type: "click", x: 1, y: 2 }]
   }
 };
 

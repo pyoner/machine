@@ -7,6 +7,18 @@ export type DoneEvent<D> = Event<"done"> & { data: D };
 export type ErrorEvent<E extends Error> = Event<"error"> & { error: E };
 export type InvokeEvent<D, E extends Error> = DoneEvent<D> | ErrorEvent<E>;
 
+export type Pool<M extends { id: keyof any }> = {
+  [P in M["id"]]: Record<
+    keyof any,
+    Array<
+      ExtractFromState<
+        ExtractFromMachine<Extract<M, { id: P }>, "State">,
+        "Event"
+      >
+    >
+  >
+};
+
 export type Queue = Array<Event>;
 export type Queues = Record<number, Queue>;
 export interface Meta {
@@ -83,7 +95,8 @@ export interface State<
   exit?: ExitFunction<C, M>;
 }
 
-export type Machine<S extends { id: keyof any }> = {
+export type Machine<ID extends keyof any, S extends { id: keyof any }> = {
+  id: ID;
   initial: S["id"];
   states: { [P in S["id"]]: Extract<S, { id: P }> };
 };
@@ -129,5 +142,17 @@ export type ExtractFromState<S, P extends StateParam> = S extends State<
     ? ExtractFromInvokeEvent<E, "Data">
     : P extends "InvokeError"
     ? ExtractFromInvokeEvent<E, "Error">
+    : never
+  : never;
+
+export type MachineParam = "ID" | "State";
+export type ExtractFromMachine<M, P extends MachineParam> = M extends Machine<
+  infer ID,
+  infer S
+>
+  ? P extends "ID"
+    ? ID
+    : P extends "State"
+    ? S
     : never
   : never;
