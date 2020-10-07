@@ -7,7 +7,7 @@ import {
   ActionFunction,
   InvokeFunction,
   EnterFunction,
-  ExtractFromState
+  ExtractFromState,
 } from "./machine";
 
 import { send } from "./interpret";
@@ -22,7 +22,7 @@ export function state<S>(
     id,
     on,
     enter,
-    exit
+    exit,
   };
 }
 
@@ -44,7 +44,7 @@ export function guards<C extends Context, E extends Event, M extends Meta>(
   ...args: GuardFunction<C, E, M>[]
 ): GuardFunction<C, E, M> {
   return (context: C, event: E, meta: M) =>
-    args.every(func => func(context, event, meta));
+    args.every((func) => func(context, event, meta));
 }
 
 export function reducers<C extends Context, E extends Event, M extends Meta>(
@@ -58,7 +58,7 @@ export function actions<C extends Context, E extends Event, M extends Meta>(
   ...args: ActionFunction<C, E, M>[]
 ): ActionFunction<C, E, M> {
   return (context: C, event: E, meta: M) =>
-    args.forEach(func => func(context, event, meta));
+    args.forEach((func) => func(context, event, meta));
 }
 
 function wrapInvokeFn<D, C extends Context, M extends Meta>(
@@ -88,9 +88,19 @@ export function invoke<S>(
   return {
     id,
     on: {
-      done: transition(done),
-      error: transition(error)
+      done: transition<
+        ExtractFromState<S, "IDs">,
+        ExtractFromState<S, "Context">,
+        ExtractFromState<S, "Event">,
+        ExtractFromState<S, "Meta">
+      >(done),
+      error: transition<
+        ExtractFromState<S, "IDs">,
+        ExtractFromState<S, "Context">,
+        ExtractFromState<S, "Event">,
+        ExtractFromState<S, "Meta">
+      >(error),
     },
-    enter: wrapInvokeFn(fn)
+    enter: wrapInvokeFn(fn),
   };
 }
